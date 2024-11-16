@@ -2,6 +2,7 @@ import type { IChat, IMessage } from '@/types';
 import { defineStore } from 'pinia';
 import { computed, readonly, ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+import { recover, save } from '@/utils/persistence';
 
 export const useChatStore = defineStore('chat', () => {
   const _chats = ref<Array<IChat>>([]);
@@ -39,7 +40,8 @@ export const useChatStore = defineStore('chat', () => {
   };
 
   const init = () => {
-    // TODO 读取本地存储，恢复历史记录
+    // 读取本地存储，恢复历史记录
+    setChat(recover());
     addNewChat();
     switchChat(_chats.value[0].id);
   };
@@ -47,6 +49,7 @@ export const useChatStore = defineStore('chat', () => {
   const updateChat = (msg: IMessage) => {
     const target = _chats.value.filter((c) => c === currentChat.value)[0];
     target.messages.push(msg);
+    save(_chats.value);
   };
 
   return {

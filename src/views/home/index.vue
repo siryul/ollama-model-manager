@@ -5,6 +5,7 @@ import type { ChatCompletionChunk, ChatCompletionRole } from 'openai/resources/i
 import type { Stream } from 'openai/streaming.mjs';
 import { useChatStore } from '@/stores/chat';
 import { storeToRefs } from 'pinia';
+import { marked } from 'marked';
 
 const chatStore = useChatStore();
 const { currentChat } = storeToRefs(chatStore);
@@ -19,7 +20,7 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
   if (streamResponse.value) {
     showStreamResponse.value = true;
     let innerText = '';
-    let role: ChatCompletionRole;
+    let role: ChatCompletionRole = 'user'; // 初始化仅为不报错
     for await (const chunk of stream) {
       innerText += chunk.choices[0].delta.content;
       role = chunk.choices[0].delta.role!;
@@ -32,21 +33,24 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
 </script>
 
 <template>
-  <div class="container h-full overflow-x-hidden overflow-y-auto pb-40">
-    <ul class="tips flex gap-3 text-gray-400 select-none" v-if="showTips">
-      <li class="border rounded-full p-2 shadow-sm flex items-center">
+  <div class="container relative h-full overflow-x-hidden overflow-y-auto pb-40">
+    <ul
+      class="tips absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-3 text-gray-400 select-none"
+      v-if="showTips"
+    >
+      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
         <span class="material-icons text-yellow-400 mr-1"> lightbulb </span>构思
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center">
+      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
         <span class="material-icons text-blue-400 mr-1"> school </span>提供建议
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center">
+      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
         <span class="material-icons text-green-400 mr-1"> create </span>帮我写
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center">
+      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
         <span class="material-icons text-orange-400 mr-1"> text_snippet </span>总结文本
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center">
+      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
         <span class="material-icons text-purple-400 mr-1"> code </span>
         代码
       </li>
@@ -59,7 +63,7 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
         :key="i"
         :class="{ 'text-right': m.role === 'user' }"
       >
-        {{ m.content }}
+        <div v-html="marked(m.content)"></div>
       </li>
       <li v-show="showStreamResponse" class="bg-stone-100 p-2 rounded-lg" ref="streamResponse"></li>
     </ul>

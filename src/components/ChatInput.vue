@@ -56,14 +56,15 @@ async function submit(e: KeyboardEvent) {
   if (msg.value === '') {
     return;
   }
-  if (e.key === 'Enter' && e.ctrlKey) {
+  if (e.key === 'Enter' && e.shiftKey) {
+    e.preventDefault();
     chatStore.updateChat({ role: 'user', content: msg.value });
+    msg.value = '';
     const stream = await chat({
       model: modelsStore.currentModel!.id,
       messages: chatStore.currentChat.messages as ChatCompletionMessageParam[],
       stream: true,
     });
-    msg.value = '';
     emit('submit', stream as Stream<ChatCompletionChunk>);
   }
 }
