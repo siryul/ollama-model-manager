@@ -1,31 +1,66 @@
 # ollama-model-manager
 
-## Project Setup
+✨ **项目描述** ✨
+
+ollama-model-manager 是一个强大的模型管理工具，专为开发者设计，旨在简化模型切换和对话管理。
+
+🚀 **技术栈** 🚀
+
+- **Vue 3**: 现代化的前端框架
+- **Pinia**: 状态管理
+- **Vue Router**: 路由管理
+- **Vite**: 快速构建工具
+- **TypeScript**: 类型安全
+- **ESLint & Prettier**: 代码质量和格式化
+- **Vitest**: 单元测试
+- **Tailwind CSS**: 样式框架
+
+🔧 **可使用的功能** 🔧
+
+- 🌟 **模型切换**: 切换对话模型
+- 💬 **文本对话**: 支持基本的文本对话功能
+- 🔀 **会话切换**: 轻松在不同会话之间切换
+
+🔮 **未来可能支持的功能** 🔮
+
+- 🌟 **模型管理**: 轻松添加、删除和更新模型
+- 🤖 **AI 模型集成**: 支持更多 AI 模型的集成
+- 🖼️ **支持图像对话**: 实现图像与文本的混合对话
+- 🎨 **图像生成**: 基于文本描述生成图像
+- 📊 **数据可视化**: 提供模型数据的可视化工具
+- 🌐 **多语言支持**: 支持更多语言的界面和文档
+- 📱 **移动端优化**: 提供更好的移动端体验
+
+## 项目设置
 
 ```sh
 pnpm install
 ```
 
-### Compile and Hot-Reload for Development
+### 开发环境编译和热重载
 
 ```sh
 pnpm dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### 生产环境类型检查、编译和压缩
 
 ```sh
 pnpm build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### 使用 [Vitest](https://vitest.dev/) 运行单元测试
 
 ```sh
 pnpm test:unit
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### 使用 [ESLint](https://eslint.org/) 进行代码检查
 
 ```sh
 pnpm lint
 ```
+
+📜 **开源协议** 📜
+
+本项目采用 [MIT License](https://opensource.org/licenses/MIT) 开源协议。您可以自由地使用、修改和分发本项目的代码，但请保留原始版权声明。
