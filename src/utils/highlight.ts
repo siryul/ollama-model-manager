@@ -2,7 +2,7 @@ import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
 
-export const marked = new Marked(
+const marked = new Marked(
   markedHighlight({
     emptyLangClass: 'hljs',
     langPrefix: 'hljs language-',
@@ -12,3 +12,10 @@ export const marked = new Marked(
     },
   }),
 );
+
+// marked.setOptions({
+//   breaks: true,
+//   gfm: true,
+// });
+
+export default marked;

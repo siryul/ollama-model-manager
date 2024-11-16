@@ -5,7 +5,7 @@ import type { ChatCompletionChunk, ChatCompletionRole } from 'openai/resources/i
 import type { Stream } from 'openai/streaming.mjs';
 import { useChatStore } from '@/stores/chat';
 import { storeToRefs } from 'pinia';
-import { marked } from 'marked';
+import marked from '@/utils/highlight';
 
 const chatStore = useChatStore();
 const { currentChat } = storeToRefs(chatStore);
@@ -63,7 +63,7 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
         :key="i"
         :class="{ 'text-right': m.role === 'user' }"
       >
-        <div v-html="marked(m.content)"></div>
+        <div v-html="marked.parse(m.content)" class="flex flex-col gap-4"></div>
       </li>
       <li v-show="showStreamResponse" class="bg-stone-100 p-2 rounded-lg" ref="streamResponse"></li>
     </ul>
