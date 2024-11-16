@@ -3,7 +3,7 @@
     <slot name="nav" />
   </nav>
   <header
-    class="fixed flex items-center justify-between pl-4 pr-4 top-0 left-80 right-0 h-14 border-b shadow-sm backdrop-blur-md"
+    class="fixed z-10 flex items-center justify-between pl-4 pr-4 top-0 left-80 right-0 h-14 border-b shadow-sm backdrop-blur-md"
   >
     <slot name="header" />
   </header>

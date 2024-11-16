@@ -6,6 +6,8 @@
       placeholder="请输入内容..."
       class="txt border bg-transparent w-full border-none outline-none border-gray-300 rounded resize-none overflow-y-auto max-h-40 focus:outline-none"
       @input="autoExpand"
+      v-model.trim="msg"
+      @keydown="submit"
     ></textarea>
     <div class="flex items-center text-gray-500 justify-between">
       <div class="flex items-center">
@@ -23,8 +25,18 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { chat } from '@/api';
+import { useModelsStore } from '@/stores/models';
+import type { ChatCompletionChunk, ChatCompletionMessageParam } from 'openai/resources/index.mjs';
+import type { Stream } from 'openai/streaming.mjs';
+import { useChatStore } from '@/stores/chat';
 
 const txt = ref<HTMLElement | null>(null);
+const msg = ref('');
+const modelsStore = useModelsStore();
+const chatStore = useChatStore();
+
+const emit = defineEmits<{ submit: [value: Stream<ChatCompletionChunk>] }>();
 
 function autoExpand() {
   if (txt.value) {
@@ -37,6 +49,22 @@ function autoExpand() {
     } else {
       txt.value.style.height = `${maxHeight}px`;
     }
+  }
+}
+
+async function submit(e: KeyboardEvent) {
+  if (msg.value === '') {
+    return;
+  }
+  if (e.key === 'Enter' && e.ctrlKey) {
+    chatStore.updateChat({ role: 'user', content: msg.value });
+    const stream = await chat({
+      model: modelsStore.currentModel!.id,
+      messages: chatStore.currentChat.messages as ChatCompletionMessageParam[],
+      stream: true,
+    });
+    msg.value = '';
+    emit('submit', stream as Stream<ChatCompletionChunk>);
   }
 }
 </script>

@@ -57,7 +57,7 @@ export default definePrompt({
     },
     { value: 'revert', name: 'revert:   ⏪️  Reverts a previous commit', emoji: ':rewind:' },
   ],
-  useEmoji: false,
+  useEmoji: true,
   emojiAlign: 'center',
   useAI: false,
   aiNumber: 1,
