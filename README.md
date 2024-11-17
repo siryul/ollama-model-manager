@@ -31,35 +31,44 @@ ollama-model-manager 是一个强大的模型管理工具，专为开发者设�
 - 🌐 **多语言支持**: 支持更多语言的界面和文档
 - 📱 **移动端优化**: 提供更好的移动端体验
 
-## 项目设置
+🔨 **继续开发** 🔨
 
-```sh
-pnpm install
-```
+1. **克隆项目仓库**
 
-### 开发环境编译和热重载
+   首先，克隆项目到本地并进入项目目录：
 
-```sh
-pnpm dev
-```
+   ```sh
+   git clone https://github.com/siryul/ollama-model-manager.git
+   cd ollama-model-manager
+   ```
 
-### 生产环境类型检查、编译和压缩
+2. **安装项目依赖**
 
-```sh
-pnpm build
-```
+   使用以下命令安装项目所需的所有依赖：
 
-### 使用 [Vitest](https://vitest.dev/) 运行单元测试
+   ```sh
+   pnpm install
+   ```
 
-```sh
-pnpm test:unit
-```
+3. **启动开发服务器**
 
-### 使用 [ESLint](https://eslint.org/) 进行代码检查
+   运行以下命令以启动开发环境，进行实时编译和热重载：
 
-```sh
-pnpm lint
-```
+   ```sh
+   pnpm dev
+   ```
+
+4. **启动爬虫服务器**
+
+   由于缺乏官方的在线搜索 API，项目使用爬虫技术获取在线信息。请启动爬虫服务器以启用在线搜索功能：
+
+   ```sh
+   cd ollama-model-manager/spider
+   pnpm install
+   pnpm dev
+   ```
+
+   确保爬虫服务器正常运行，以便在开发过程中使用完整的功能集。
 
 📜 **开源协议** 📜
 
