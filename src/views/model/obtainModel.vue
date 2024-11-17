@@ -11,9 +11,12 @@ const { list } = storeToRefs(modelsStore);
 const searchRes = ref<Array<{ name: string; tags: string[]; desc: string; count: string[] }>>([]);
 const selectedType = ref<Category>(Category.all);
 const keyword = ref<string>('');
+const isLoading = ref(false);
 
 const search = async () => {
+  isLoading.value = true;
   searchRes.value = (await searchModel({ q: keyword.value, c: selectedType.value })) as any;
+  isLoading.value = false;
 };
 
 search();
@@ -39,7 +42,7 @@ const searchHandler = async (e: KeyboardEvent) => {
   if (e.key !== 'Enter') {
     return;
   }
-  if (keyword) {
+  if (keyword.value) {
     search();
   }
 };
@@ -70,7 +73,8 @@ const searchHandler = async (e: KeyboardEvent) => {
         </li>
       </ul>
     </div>
-    <ul class="overflow-y-auto h-full p-5 pt-40" v-if="searchRes" style="scrollbar-width: none">
+
+    <ul class="overflow-y-auto h-full p-5 pt-40" v-if="!isLoading" style="scrollbar-width: none">
       <li
         v-for="i in searchRes"
         :key="i.name"
@@ -112,5 +116,23 @@ const searchHandler = async (e: KeyboardEvent) => {
         </div>
       </li>
     </ul>
+    <div
+      class="space-y-6 animate-pulse m-5 p-5 mt-44 border border-double rounded-md bg-gray-50/70"
+      v-else
+    >
+      <div class="h-6 bg-gray-300 rounded animate-pulse w-1/3" />
+      <div class="flex space-x-2">
+        <div class="h-4 bg-gray-300 rounded-md animate-pulse px-4 py-1 w-16" />
+        <div class="h-4 bg-gray-300 rounded-md animate-pulse px-4 py-1 w-12" />
+        <div class="h-4 bg-gray-300 rounded-md animate-pulse px-4 py-1 w-12" />
+      </div>
+      <div class="h-4 bg-gray-300 rounded animate-pulse w-full" />
+      <div class="h-4 bg-gray-300 rounded animate-pulse w-full" />
+      <div class="flex gap-4">
+        <div class="h-4 bg-gray-300 rounded animate-pulse w-10" />
+        <div class="h-4 bg-gray-300 rounded animate-pulse w-10" />
+        <div class="h-4 bg-gray-300 rounded animate-pulse w-16" />
+      </div>
+    </div>
   </div>
 </template>
