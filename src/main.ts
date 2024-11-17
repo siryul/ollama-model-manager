@@ -8,7 +8,7 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import router from './router';
 
-import { modelList } from './api';
+import { getModelList } from './api';
 import { useModelsStore } from './stores/models';
 import { useChatStore } from './stores/chat';
 
@@ -19,7 +19,7 @@ app.use(createPinia()).use(router).mount('#app');
 const modelsStore = useModelsStore();
 const chatStore = useChatStore();
 
-modelList().then((list) => {
+getModelList().then((list) => {
   modelsStore.setList(list);
   if (list.length) {
     modelsStore.switchModel(list[0].id);

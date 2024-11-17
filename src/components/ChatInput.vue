@@ -1,5 +1,5 @@
 <template>
-  <div class="txt p-2 bg-gray-100 rounded-md border-double border">
+  <div class="txt p-2 bg-gray-100/90 backdrop-blur-xl rounded-lg border-double border">
     <textarea
       ref="txt"
       rows="1"
@@ -9,7 +9,7 @@
       v-model.trim="msg"
       @keydown="submit"
     ></textarea>
-    <div class="flex items-center text-gray-500 justify-between">
+    <div class="flex items-center text-gray-500 justify-between select-none">
       <div class="flex items-center">
         <span class="material-icons">add</span>
       </div>

@@ -38,19 +38,29 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
       class="tips absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-3 text-gray-400 select-none"
       v-if="showTips"
     >
-      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
+      <li
+        class="border rounded-full p-2 shadow-sm flex items-center text-nowrap hover:bg-stone-100"
+      >
         <span class="material-icons text-yellow-400 mr-1"> lightbulb </span>构思
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
+      <li
+        class="border rounded-full p-2 shadow-sm flex items-center text-nowrap hover:bg-stone-100"
+      >
         <span class="material-icons text-blue-400 mr-1"> school </span>提供建议
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
+      <li
+        class="border rounded-full p-2 shadow-sm flex items-center text-nowrap hover:bg-stone-100"
+      >
         <span class="material-icons text-green-400 mr-1"> create </span>帮我写
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
+      <li
+        class="border rounded-full p-2 shadow-sm flex items-center text-nowrap hover:bg-stone-100"
+      >
         <span class="material-icons text-orange-400 mr-1"> text_snippet </span>总结文本
       </li>
-      <li class="border rounded-full p-2 shadow-sm flex items-center text-nowrap">
+      <li
+        class="border rounded-full p-2 shadow-sm flex items-center text-nowrap hover:bg-stone-100"
+      >
         <span class="material-icons text-purple-400 mr-1"> code </span>
         代码
       </li>
@@ -58,16 +68,22 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
 
     <ul class="pl-4 pr-4 flex flex-col gap-4 mt-4">
       <li
-        class="bg-stone-100 p-2 rounded-lg"
         v-for="(m, i) in currentChat.messages"
         :key="i"
-        :class="{ 'text-right': m.role === 'user' }"
+        class="flex gap-2"
+        :class="{ 'flex-row-reverse': m.role === 'user' }"
       >
-        <div v-html="marked.parse(m.content)" class="flex flex-col gap-4"></div>
+        <div v-if="m.role !== 'user'">
+          <span class="material-icons">supervised_user_circle</span>
+        </div>
+        <div
+          v-html="marked.parse(m.content)"
+          class="flex flex-col gap-4 bg-stone-100 p-2 rounded-lg border border-double"
+        />
       </li>
       <li v-show="showStreamResponse" class="bg-stone-100 p-2 rounded-lg" ref="streamResponse"></li>
     </ul>
 
-    <ChatInput class="fixed right-10 left-96 bottom-6 shadow-lg rounded-lg" @submit="handSubmit" />
+    <ChatInput class="fixed right-10 left-96 bottom-6 shadow-2xl rounded-lg" @submit="handSubmit" />
   </div>
 </template>

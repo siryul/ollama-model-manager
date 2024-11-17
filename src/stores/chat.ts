@@ -21,6 +21,9 @@ export const useChatStore = defineStore('chat', () => {
   };
 
   const addNewChat = () => {
+    if (_chats.value[0].messages.length === 0) {
+      return;
+    }
     const oldChat = _chats.value.filter((c) => c.messages.length);
     const nc: IChat = {
       id: uuidv4(),

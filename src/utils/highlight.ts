@@ -13,9 +13,9 @@ const marked = new Marked(
   }),
 );
 
-// marked.setOptions({
-//   breaks: true,
-//   gfm: true,
-// });
+marked.use({
+  breaks: true,
+  gfm: true,
+});
 
 export default marked;

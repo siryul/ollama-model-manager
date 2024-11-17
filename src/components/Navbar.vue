@@ -1,25 +1,31 @@
 <script lang="ts" setup>
-import { useChatStore } from '@/stores/chat';
-import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import ChatNav from '@/views/chat/nav.vue';
+import ModelNav from '@/views/model/nav.vue';
+import { useChatStore } from '@/stores/chat';
 
 const router = useRouter();
-
 const chatStore = useChatStore();
-const { chats, currentChat } = storeToRefs(chatStore);
 
-const list = computed(() => {
-  return chats.value.filter((c) => c.messages.length);
-});
+const navCompoents = {
+  chat: ChatNav,
+  model: ModelNav,
+};
 
-const switchChat = (e: MouseEvent) => {
-  const target = e.target as HTMLElement;
-  if (target.nodeName === 'LI') {
-    const id = target.dataset.id;
-    router.push({ name: 'chat', params: { id } });
-    chatStore.switchChat(id!);
-  }
+type nav = 'chat' | 'model';
+
+const navType = ref<nav>('chat');
+
+watch(
+  () => router.currentRoute.value.meta,
+  (meta) => {
+    navType.value = meta.navbarType ? (meta.navbarType as nav) : 'chat';
+  },
+);
+
+const backToChat = () => {
+  router.push({ name: 'chat', params: { id: chatStore.currentChat.id } });
 };
 </script>
 
@@ -30,6 +36,7 @@ const switchChat = (e: MouseEvent) => {
     <span class="material-icons text-gray-400">auto_awesome_mosaic</span>
   </button>
   <div
+    @click="backToChat"
     class="select-none flex items-center text-2xl bg-clip-text font-medium text-transparent bg-gradient-to-r from-pink-500 to-violet-500"
   >
     <span class="material-icons logo">terrain</span>
@@ -43,18 +50,7 @@ const switchChat = (e: MouseEvent) => {
       placeholder="search"
     />
   </div>
-  <ul class="mt-3 overflow-y-auto" @click="switchChat" v-if="chats">
-    <li
-      class="hover:bg-gray-200 text-sm p-2 rounded-md mb-1 last:mb-0 text-nowrap overflow-hidden text-ellipsis"
-      v-for="c in list"
-      :key="c.id"
-      :class="c.id === currentChat.id ? 'bg-gray-200' : ''"
-      :data-id="c.id"
-      v-show="c.messages.length"
-    >
-      {{ c.messages[0]?.content }}
-    </li>
-  </ul>
+  <component :is="navCompoents[navType]"></component>
 </template>
 
 <style scoped>
