@@ -12,7 +12,7 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "cz": " czg"
+    "git": "git add . & cross-env NODE_OPTIONS='--experimental-transform-types' cz"
   },
   "config": {
     "commitizen": {
@@ -45,6 +45,7 @@
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.20",
     "commitizen": "^4.3.1",
+    "cross-env": "^7.0.3",
     "cz-git": "^1.11.0",
     "eslint": "^9.14.0",
     "eslint-plugin-vue": "^9.30.0",

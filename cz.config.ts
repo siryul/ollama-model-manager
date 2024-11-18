@@ -61,7 +61,7 @@ export default definePrompt({
   emojiAlign: 'center',
   useAI: false,
   aiNumber: 1,
-  themeColorCode: '',
+  themeColorCode: '38;5;075',
   scopes: [],
   allowCustomScopes: true,
   allowEmptyScopes: true,
