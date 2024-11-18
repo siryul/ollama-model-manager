@@ -18,8 +18,8 @@ const deleteModel = (e: MouseEvent) => {
 </script>
 
 <template>
-  <ul class="m-3 border rounded-md overflow-hidden" @click="deleteModel">
-    <li class="grid grid-cols-6 justify-between items-center p-2 bg-stone-200 font-medium">
+  <ul class="m-5 border rounded-md overflow-hidden" @click="deleteModel">
+    <li class="grid grid-cols-6 justify-between items-center p-2 bg-gray-100 font-medium">
       <span class="col-span-2">名称</span>
       <span class="col-span-2">所属者</span>
       <span class="text-center">操作</span>
@@ -28,11 +28,12 @@ const deleteModel = (e: MouseEvent) => {
     <li
       v-for="l in list"
       :key="l.id"
-      class="grid grid-cols-6 justify-between items-center p-2 odd:bg-stone-100"
+      class="grid grid-cols-6 justify-between items-center p-2 odd:bg-gray-50"
     >
       <span class="col-span-2">{{ l.id }}</span>
       <span class="col-span-2">{{ l.owned_by }}</span>
-      <span class="material-icons select-none cursor-pointer text-red-500 place-self-center"
+      <span
+        class="material-icons select-none cursor-pointer text-red-500 place-self-center hover:bg-gray-100 rounded-md"
         >delete</span
       >
       <span class="text-sm place-self-end text-zinc-400">{{ fromNow(l.created) }}</span>

@@ -1,6 +1,7 @@
 import type { Model } from 'openai/resources/index.mjs';
 import { defineStore } from 'pinia';
 import { readonly, ref, computed } from 'vue';
+import { getModelList } from '@/api';
 
 export const useModelsStore = defineStore('models', () => {
   const _list = ref<Model[]>([]);
@@ -24,7 +25,19 @@ export const useModelsStore = defineStore('models', () => {
     if (_list.value.some((i) => i.id === id)) {
       currentUseId.value = id;
     } else {
-      throw new RangeError(`${id} is not a valide value`);
+      throw new RangeError(`${id} is not a valid value`);
+    }
+  };
+
+  const updateList = async () => {
+    const list = await getModelList();
+    setList(list);
+  };
+
+  const init = async () => {
+    await updateList();
+    if (_list.value.length) {
+      switchModel(_list.value[0].id);
     }
   };
 
@@ -34,5 +47,7 @@ export const useModelsStore = defineStore('models', () => {
     setList,
     deleteModel,
     switchModel,
+    updateList,
+    init,
   };
 });

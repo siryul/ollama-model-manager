@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import ollama, { type PullRequest } from 'ollama';
 import request from '@/utils/request';
 import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions.mjs';
 import type { ISearchModelParams } from '@/types';
@@ -28,4 +29,8 @@ export const retrieveModel = async (model: string) => {
 
 export const searchModel = async (params: ISearchModelParams = {}) => {
   return await request.get('/api/search', { params });
+};
+
+export const pullModel = async (request: PullRequest) => {
+  return await ollama.pull({ ...request, stream: true });
 };

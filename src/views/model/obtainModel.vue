@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { searchModel } from '@/api';
+import { pullModel, searchModel } from '@/api';
 import { useModelsStore } from '@/stores/models';
 import { storeToRefs } from 'pinia';
 import { Category } from '@/types';
@@ -19,10 +19,75 @@ const search = async () => {
   isLoading.value = false;
 };
 
+// Store the response of ongoing downloads, allowing users to cancel downloads if needed
+const downloadQueue = ref<{ [key: string]: () => void }>({});
+
 search();
 
-const downloadModel = async () => {
-  // TODO download model
+const changeIconStatus = (e: HTMLElement, status: 'downloading' | 'origin' | 'success') => {
+  if (status === 'success') {
+    e.innerText = 'check_circle';
+    e.classList.remove('text-orange-400', 'hover:text-orange-600', 'cursor-pointer');
+    e.classList.add('text-green-500');
+  } else if (status === 'downloading') {
+    e.innerText = 'change_circle';
+    e.classList.add('animate-spin');
+  } else {
+    e.classList.remove('animate-spin');
+    e.innerText = 'download_for_offline';
+  }
+};
+
+const downloadHandler = async (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  e.stopPropagation();
+  if (target.nodeName !== 'SPAN') {
+    return;
+  }
+  if (target.innerText === 'change_circle') {
+    // downloading, click to cancel
+    const model = target.dataset.name;
+    if (!model) {
+      return;
+    }
+    // TODO: has an error to be handle 'Uncaught (in promise) AbortError: BodyStreamBuffer was aborted'
+    downloadQueue.value[model]();
+    delete downloadQueue.value[model];
+    changeIconStatus(target, 'origin');
+    console.log('Task aborted');
+    return;
+  }
+  if (target.innerText !== 'download_for_offline') {
+    return;
+  }
+
+  const model = target.dataset.name;
+  if (model) {
+    const resp = await pullModel({ model });
+    changeIconStatus(target, 'downloading');
+
+    // save response, has abort method, use it like response.abort()
+    downloadQueue.value[model] = resp.abort.bind(resp);
+
+    let isSuccess = false;
+
+    for await (const chunk of resp) {
+      if (chunk.status === 'success') {
+        // download success
+        isSuccess = true;
+        // delete completed response
+        delete downloadQueue.value[model];
+        // update modelsStore list
+        modelsStore.updateList();
+      }
+    }
+
+    if (isSuccess) {
+      changeIconStatus(target, 'success');
+    } else {
+      changeIconStatus(target, 'origin');
+    }
+  }
 };
 
 const tagIcon = ['arrow_downward', 'tag', 'access_time'];
@@ -74,7 +139,12 @@ const searchHandler = async (e: KeyboardEvent) => {
       </ul>
     </div>
 
-    <ul class="overflow-y-auto h-full p-5 pt-40" v-if="!isLoading" style="scrollbar-width: none">
+    <ul
+      class="overflow-y-auto h-full p-5 pt-40"
+      v-if="!isLoading"
+      @click="downloadHandler"
+      style="scrollbar-width: none"
+    >
       <li
         v-for="i in searchRes"
         :key="i.name"
@@ -89,6 +159,7 @@ const searchHandler = async (e: KeyboardEvent) => {
                 ? 'text-green-500 hover:text-green-500'
                 : 'text-orange-400 hover:text-orange-600 cursor-pointer'
             "
+            :data-name="i.name"
             >{{
               list.some((m) => m.id.split(':')[0] === i.name)
                 ? 'check_circle'

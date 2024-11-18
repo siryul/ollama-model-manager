@@ -19,11 +19,5 @@ app.use(createPinia()).use(router).mount('#app');
 const modelsStore = useModelsStore();
 const chatStore = useChatStore();
 
-getModelList().then((list) => {
-  modelsStore.setList(list);
-  if (list.length) {
-    modelsStore.switchModel(list[0].id);
-  }
-});
-
 chatStore.init();
+modelsStore.init();
