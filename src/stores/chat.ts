@@ -1,8 +1,10 @@
-import type { IChat, IMessage } from '@/types';
+import type { IChat } from '@/types';
 import { defineStore } from 'pinia';
 import { computed, readonly, ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { recover, save } from '@/utils/persistence';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
+import { addMessageToChat, getAllChat, saveSingleChat } from '@/db';
 
 export const useChatStore = defineStore('chat', () => {
   const _chats = ref<Array<IChat>>([]);
@@ -21,7 +23,7 @@ export const useChatStore = defineStore('chat', () => {
   };
 
   const addNewChat = () => {
-    if (_chats.value[0].messages.length === 0) {
+    if (_chats.value.length && _chats.value[0].messages.length === 0) {
       return;
     }
     const oldChat = _chats.value.filter((c) => c.messages.length);
@@ -42,17 +44,26 @@ export const useChatStore = defineStore('chat', () => {
     }
   };
 
-  const init = () => {
+  const init = async () => {
     // 读取本地存储，恢复历史记录
-    setChat(recover());
+    const chat = await getAllChat();
+    // setChat(recover()); // use localstorage
+    setChat(chat);
     addNewChat();
     switchChat(_chats.value[0].id);
   };
 
-  const updateChat = (msg: IMessage) => {
+  const updateChat = (msg: ChatCompletionMessageParam) => {
     const target = _chats.value.filter((c) => c === currentChat.value)[0];
     target.messages.push(msg);
-    save(_chats.value);
+    target.lastUpdated = Date.now();
+    if (target.messages.length === 1) {
+      // new chat, need add to db first
+      saveSingleChat(JSON.parse(JSON.stringify(target)));
+      return;
+    }
+    // save(_chats.value); // use localstorage
+    addMessageToChat(target.id, msg);
   };
 
   return {

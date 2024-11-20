@@ -1,7 +1,7 @@
 <template>
   <div
     class="models-selector relative flex items-center cursor-default hover:bg-gray-100 p-1 rounded-md"
-    @click="swtichShowList"
+    @click="switchShowList"
   >
     {{ currentModel ? currentModel.id : '' }}
     <span class="material-icons text-zinc-400"> chevron_right </span>
@@ -43,7 +43,7 @@ const { list, currentModel } = storeToRefs(modelsStore);
 const chatStore = useChatStore();
 const router = useRouter();
 
-const swtichShowList = () => {
+const switchShowList = () => {
   showList.value = !showList.value;
 };
 

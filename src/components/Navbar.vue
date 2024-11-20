@@ -8,7 +8,7 @@ import { useChatStore } from '@/stores/chat';
 const router = useRouter();
 const chatStore = useChatStore();
 
-const navCompoents = {
+const navComponents = {
   chat: ChatNav,
   model: ModelNav,
 };
@@ -40,7 +40,7 @@ const backToChat = () => {
     class="select-none flex items-center text-2xl bg-clip-text font-medium text-transparent bg-gradient-to-r from-pink-500 to-violet-500"
   >
     <span class="material-icons logo">terrain</span>
-    <span class="ml-2"> Ollama </span>
+    <span class="ml-2"> AI Box </span>
   </div>
   <div class="search flex items-center relative mt-4 mb-6 -z-20">
     <span class="material-icons text-gray-400 pointer-events-none ml-1">search</span>
@@ -50,7 +50,7 @@ const backToChat = () => {
       placeholder="search"
     />
   </div>
-  <component :is="navCompoents[navType]"></component>
+  <component :is="navComponents[navType]"></component>
 </template>
 
 <style scoped>

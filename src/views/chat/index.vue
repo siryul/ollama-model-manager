@@ -6,6 +6,7 @@ import type { Stream } from 'openai/streaming.mjs';
 import { useChatStore } from '@/stores/chat';
 import { storeToRefs } from 'pinia';
 import marked from '@/utils/highlight';
+import type { ChatCompletionMessageParam } from 'openai/src/resources/chat/completions.js';
 
 const chatStore = useChatStore();
 const { currentChat } = storeToRefs(chatStore);
@@ -17,18 +18,19 @@ const showStreamResponse = ref(false);
 const streamResponse = ref<HTMLElement | null>(null);
 
 const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
-  if (streamResponse.value) {
-    showStreamResponse.value = true;
-    let innerText = '';
-    let role: ChatCompletionRole = 'user'; // 初始化仅为不报错
-    for await (const chunk of stream) {
-      innerText += chunk.choices[0].delta.content;
-      role = chunk.choices[0].delta.role!;
-      streamResponse.value.innerText = innerText;
-    }
-    chatStore.updateChat({ role, content: innerText });
-    showStreamResponse.value = false;
+  if (!streamResponse.value) {
+    return;
   }
+  showStreamResponse.value = true;
+  let innerText = '';
+  let role: ChatCompletionRole = 'assistant'; // 初始化仅为不报错
+  for await (const chunk of stream) {
+    innerText += chunk.choices[0].delta.content;
+    role = chunk.choices[0].delta.role!;
+    streamResponse.value.innerText = innerText;
+  }
+  chatStore.updateChat({ role, content: innerText } as ChatCompletionMessageParam);
+  showStreamResponse.value = false;
 };
 </script>
 
@@ -77,11 +79,28 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
           <span class="material-icons">supervised_user_circle</span>
         </div>
         <div
+          v-if="typeof m.content === 'string'"
           v-html="marked.parse(m.content)"
           class="flex flex-col gap-4 bg-stone-100 p-2 rounded-lg border border-double"
         />
+        <div v-else-if="m.content" class="flex flex-col gap-4">
+          <li
+            v-for="(c, i) in m.content"
+            :key="i"
+            class="flex flex-col gap-4 bg-stone-100 p-2 rounded-lg border border-double"
+          >
+            <img :src="c.image_url.url" alt="" v-if="c.type === 'image_url'" />
+            <audio :src="c.input_audio.data" v-else-if="c.type === 'input_audio'"></audio>
+            <div v-else-if="c.type === 'text'" v-html="marked.parse(c.text)" />
+          </li>
+        </div>
       </li>
-      <li v-show="showStreamResponse" class="bg-stone-100 p-2 rounded-lg" ref="streamResponse"></li>
+      <li class="flex gap-2" v-show="showStreamResponse">
+        <div>
+          <span class="material-icons">supervised_user_circle</span>
+        </div>
+        <div ref="streamResponse" class="bg-stone-100 p-2 rounded-lg"></div>
+      </li>
     </ul>
 
     <ChatInput class="fixed right-10 left-96 bottom-6 shadow-2xl rounded-lg" @submit="handSubmit" />

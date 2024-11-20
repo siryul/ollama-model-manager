@@ -1,4 +1,7 @@
-import type { ChatCompletionRole } from 'openai/resources/chat/completions.mjs';
+import type {
+  ChatCompletionMessageParam,
+  ChatCompletionRole,
+} from 'openai/resources/chat/completions.mjs';
 
 export interface IMessage {
   role: ChatCompletionRole;
@@ -7,7 +10,8 @@ export interface IMessage {
 
 export interface IChat {
   id: string;
-  messages: Array<IMessage>;
+  messages: Array<ChatCompletionMessageParam>;
+  lastUpdated?: number;
 }
 
 export enum Category {
