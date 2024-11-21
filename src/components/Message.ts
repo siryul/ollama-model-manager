@@ -1,7 +1,5 @@
 import { createVNode, render } from 'vue';
-import Message from './Message.vue';
-
-type messageType = 'info' | 'success' | 'warn' | 'error';
+import Message, { type messageType } from './Message.vue';
 
 export default function ({
   message,

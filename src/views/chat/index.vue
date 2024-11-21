@@ -89,7 +89,12 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
             :key="i"
             class="flex flex-col gap-4 bg-stone-100 p-2 rounded-lg border border-double"
           >
-            <img :src="c.image_url.url" alt="" v-if="c.type === 'image_url'" />
+            <img
+              class="rounded-lg max-w-40"
+              :src="c.image_url.url"
+              alt=""
+              v-if="c.type === 'image_url'"
+            />
             <audio :src="c.input_audio.data" v-else-if="c.type === 'input_audio'"></audio>
             <div v-else-if="c.type === 'text'" v-html="marked.parse(c.text)" />
           </li>

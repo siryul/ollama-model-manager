@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { readonly, ref, computed } from 'vue';
 import { getModelList } from '@/api';
 import { recoverModel, saveModel } from '@/utils/persistence';
+import Message from '@/components/Message';
 
 /**
  * A store for managing models.
@@ -71,7 +72,7 @@ export const useModelsStore = defineStore('models', () => {
     } else if (_list.value.length) {
       switchModel(_list.value[0].id);
     } else {
-      // TODO： 提醒无可用模型，需先添加模型
+      Message({ message: '无可用模型，先添加模型', hidden: 3000, type: 'warn' });
     }
   };
 

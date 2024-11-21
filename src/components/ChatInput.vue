@@ -1,7 +1,12 @@
 <template>
   <div class="txt p-2 bg-gray-100/90 backdrop-blur-xl rounded-lg border-double border">
     <!-- Image list display with delete functionality -->
-    <ul class="flex gap-3 mb-2" v-if="imgList.length" @click="deleteImageHandler">
+    <ul
+      class="flex gap-3 mb-2"
+      v-if="imgList.length"
+      @click="deleteImageHandler"
+      ref="imgContainerRef"
+    >
       <li v-for="(img, i) in imgList" :key="i" class="relative img-container">
         <span
           class="delete-icon absolute right-0 top-0 translate-x-1/2 -translate-y-1/2 material-icons select-none cursor-pointer text-red-500 scale-50"
@@ -30,14 +35,27 @@
         <span class="material-icons" @click="showAddAttachment = !showAddAttachment">add</span>
         <!-- Attachment options -->
         <div
-          class="absolute text-nowrap text-gray-800 text-sm top-0 -translate-y-full p-2 rounded-md border border-double border-gray-200 bg-gray-100/40 drop-shadow-xl backdrop-blur-lg"
+          class="absolute text-nowrap text-gray-800 text-sm top-0 -translate-y-full rounded-md border border-double border-gray-200 bg-gray-50 drop-shadow-xl backdrop-blur-lg"
           v-if="showAddAttachment"
         >
-          <div>
+          <div class="hover:bg-gray-100 p-2 rounded-md">
             <label for="img"> 添加图片 </label>
-            <input id="img" type="file" accept="image/*" @change="imgInputHandler" class="hidden" />
+            <input
+              id="img"
+              type="file"
+              multiple
+              accept="image/*"
+              @change="imgInputHandler"
+              class="hidden"
+            />
           </div>
         </div>
+        <!-- <Teleport to="#app" v-if="showAddAttachment">
+          <div
+            class="fixed left-0 right-0 top-0 bottom-0 bg-slate-200"
+            @click="showAddAttachment = false"
+          />
+        </Teleport> -->
       </div>
       <div class="flex items-center">
         <!-- Placeholder for microphone functionality -->
@@ -52,14 +70,16 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { chat } from '@/api';
+import { chat, uploadImage } from '@/api';
 import { useModelsStore } from '@/stores/models';
 import type { ChatCompletionChunk, ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import type { Stream } from 'openai/streaming.mjs';
 import { useChatStore } from '@/stores/chat';
 import Message from './Message';
+import { getImgBase, url2base64 } from '@/utils';
 
 const txt = ref<HTMLElement | null>(null);
+const imgContainerRef = ref<HTMLElement | null>(null);
 const msg = ref('');
 const modelsStore = useModelsStore();
 const chatStore = useChatStore();
@@ -102,26 +122,50 @@ async function submit(e: KeyboardEvent) {
       Message({ message: 'No model to use, please add a model first!', hidden: 3000000 });
       return;
     }
+
+    let message: any[];
     if (imgList.value.length > 0) {
-      // Message includes images
-      const content: any[] = imgList.value.map((base) => {
+      // const content: any[] = imgList.value.map(async (u) => {
+      //   console.log(u);
+      //   return {
+      //     type: 'image_url',
+      //     image_url: { url: await url2base64(u) },
+      //   };
+      // });
+
+      const content: any[] = await Promise.all(
+        imgList.value.map(async (u) => {
+          // console.log(u);
+          return {
+            type: 'image_url',
+            image_url: { url: await url2base64(u) },
+          };
+        }),
+      );
+      // console.log(content);
+
+      message = content.concat({ type: 'text', text: msg.value });
+
+      const imgMessage: any[] = imgList.value.map((i) => {
         return {
           type: 'image_url',
-          image_url: { url: base },
+          image_url: { url: i },
         };
       });
+
       chatStore.updateChat({
         role: 'user',
-        content: content.concat({ type: 'text', text: msg.value }),
+        content: imgMessage.concat({ type: 'text', text: msg.value }),
       });
-      // TODO: Clear imgList after submission
+      imgList.value = [];
     } else {
+      message = [{ role: 'user', content: msg.value }];
       chatStore.updateChat({ role: 'user', content: msg.value });
     }
     msg.value = '';
     const stream = await chat({
       model: modelsStore.currentModel.id,
-      messages: chatStore.currentChat.messages as ChatCompletionMessageParam[],
+      messages: [{ role: 'user', content: message }],
       stream: true,
     });
     emit('submit', stream as Stream<ChatCompletionChunk>);
@@ -132,18 +176,25 @@ async function submit(e: KeyboardEvent) {
  * Handles image input and converts it to a base64 string.
  * @param {Event} e - The change event from the file input.
  */
-function imgInputHandler(e: Event) {
+async function imgInputHandler(e: Event) {
   const files = (e.target as HTMLInputElement).files;
   if (files) {
-    const reader = new FileReader();
+    for (const file of files) {
+      const resp = await uploadImage(file);
+      if (resp.success) {
+        imgList.value.push(`http://localhost:3000${resp.file.path}`);
+      }
+    }
+    // const reader = new FileReader();
 
-    reader.onload = (ev) => {
-      const base64 = ev.target?.result?.toString();
-      base64 && imgList.value.push(base64);
-    };
+    // reader.onload = (ev) => {
+    //   const base64 = ev.target?.result?.toString();
+    //   base64 && imgList.value.push(base64);
+    // };
 
-    reader.readAsDataURL(files[0]);
+    // reader.readAsDataURL(files[0]);
   }
+  showAddAttachment.value = false;
 }
 
 /**

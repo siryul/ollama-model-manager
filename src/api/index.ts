@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import ollama, { type PullRequest } from 'ollama';
+import ollama, { type DeleteRequest, type PullRequest } from 'ollama';
 import request from '@/utils/request';
 import type { ChatCompletionCreateParamsStreaming } from 'openai/resources/chat/completions.mjs';
 import type { ISearchModelParams } from '@/types';
@@ -91,4 +91,28 @@ export const searchModel = async (params: ISearchModelParams = {}) => {
  */
 export const pullModel = async (request: PullRequest) => {
   return await ollama.pull({ ...request, stream: true });
+};
+
+export const deleteModel = async (request: DeleteRequest) => {
+  return await ollama.delete(request);
+};
+
+export const uploadImage = async (
+  file: File,
+): Promise<{
+  success: boolean;
+  file: {
+    filename: string;
+    path: string;
+    size: number;
+    mimetype: string;
+  };
+}> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+    return await request.post('/api/upload', formData);
+  } catch (error) {
+    return Promise.reject(error);
+  }
 };
