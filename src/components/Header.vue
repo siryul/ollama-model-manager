@@ -44,7 +44,7 @@ import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const showList = ref(true);
+const showList = ref(false);
 
 const modelsStore = useModelsStore();
 const { list, currentModel } = storeToRefs(modelsStore);

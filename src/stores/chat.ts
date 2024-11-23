@@ -4,7 +4,7 @@ import { computed, readonly, ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { recover, save } from '@/utils/persistence';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
-import { addMessageToChat, getAllChat, saveSingleChat } from '@/db';
+import { addMessageToChat, dbInit, getAllChat, saveSingleChat } from '@/db';
 
 export const useChatStore = defineStore('chat', () => {
   const _chats = ref<Array<IChat>>([]);
@@ -46,11 +46,18 @@ export const useChatStore = defineStore('chat', () => {
 
   const init = async () => {
     // 读取本地存储，恢复历史记录
-    const chat = await getAllChat();
-    // setChat(recover()); // use localstorage
-    setChat(chat);
-    addNewChat();
-    switchChat(_chats.value[0].id);
+    let chat: IChat[] = [];
+    try {
+      await dbInit();
+      const chat = await getAllChat();
+      // setChat(recover()); // use localstorage
+    } catch (error) {
+      console.log('🚀 ~ chat init ~ error:', error);
+    } finally {
+      setChat(chat);
+      addNewChat();
+      switchChat(_chats.value[0].id);
+    }
   };
 
   const updateChat = (msg: ChatCompletionMessageParam) => {

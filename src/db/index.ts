@@ -55,22 +55,26 @@ export const getChatById = async (chatId: string): Promise<IChat | undefined> =>
 
 export const getAllChat = async (): Promise<IChat[]> => {
   return new Promise<IChat[]>(async (resolve, reject) => {
-    const db = await dbHelper.openDB();
-    const request = db.transaction(CHATS_NAME, 'readonly').objectStore(CHATS_NAME).openCursor();
+    try {
+      const db = await dbHelper.openDB();
 
-    const result: IChat[] = [];
+      const request = db.transaction(CHATS_NAME, 'readonly').objectStore(CHATS_NAME).openCursor();
+      const result: IChat[] = [];
 
-    request.onsuccess = () => {
-      const cursor = request.result;
-      if (cursor) {
-        result.push(cursor.value);
-        cursor.continue();
-      } else {
-        resolve(result);
-      }
-    };
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (cursor) {
+          result.push(cursor.value);
+          cursor.continue();
+        } else {
+          resolve(result);
+        }
+      };
 
-    request.onerror = () => reject(request.error);
+      request.onerror = () => reject(request.error);
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 

@@ -10,7 +10,6 @@ import router from './router';
 
 import { useModelsStore } from './stores/models';
 import { useChatStore } from './stores/chat';
-import { dbInit } from '@/db';
 
 const app = createApp(App);
 
@@ -21,4 +20,3 @@ const chatStore = useChatStore();
 
 chatStore.init();
 modelsStore.init();
-dbInit();
