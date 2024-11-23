@@ -67,7 +67,7 @@
    由于缺乏官方的在线搜索 API，项目使用爬虫技术获取在线信息。请启动爬虫服务器以启用在线搜索功能：
 
    ```sh
-   cd ollama-model-manager/spider
+   cd ollama-model-manager/server
    pnpm install
    pnpm dev
    ```

@@ -40,7 +40,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 20 * 1024 * 1024, // 20MB limit
   },
 });
 
@@ -84,7 +84,7 @@ router.use(
           .status(400)
           .json({
             success: false,
-            error: 'File size too large. Maximum size is 5MB.',
+            error: 'File size too large. Maximum size is 20MB.',
           })
           .send();
       }
