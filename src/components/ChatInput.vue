@@ -32,30 +32,17 @@
     <div class="flex items-center text-gray-500 justify-between select-none">
       <div class="flex items-center relative">
         <!-- Button to toggle attachment options -->
-        <span class="material-icons" @click="showAddAttachment = !showAddAttachment">add</span>
-        <!-- Attachment options -->
-        <div
-          class="absolute text-nowrap text-gray-800 text-sm top-0 -translate-y-full rounded-md border border-double border-gray-200 bg-gray-50 drop-shadow-xl backdrop-blur-lg"
-          v-if="showAddAttachment"
-        >
-          <div class="hover:bg-gray-100 p-2 rounded-md">
-            <label for="img"> 添加图片 </label>
-            <input
-              id="img"
-              type="file"
-              multiple
-              accept="image/*"
-              @change="imgInputHandler"
-              class="hidden"
-            />
-          </div>
-        </div>
-        <!-- <Teleport to="#app" v-if="showAddAttachment">
-          <div
-            class="fixed left-0 right-0 top-0 bottom-0 bg-slate-200"
-            @click="showAddAttachment = false"
-          />
-        </Teleport> -->
+        <label for="img">
+          <span class="material-icons-outlined">image</span>
+        </label>
+        <input
+          id="img"
+          type="file"
+          multiple
+          accept="image/*"
+          @change="imgInputHandler"
+          class="hidden"
+        />
       </div>
       <div class="flex items-center">
         <!-- Placeholder for microphone functionality -->
@@ -84,7 +71,6 @@ const msg = ref('');
 const modelsStore = useModelsStore();
 const chatStore = useChatStore();
 const imgList = ref<string[]>([]);
-const showAddAttachment = ref(false);
 
 // Emit event for submitting chat messages
 const emit = defineEmits<{ submit: [value: Stream<ChatCompletionChunk>] }>();
@@ -125,14 +111,6 @@ async function submit(e: KeyboardEvent) {
 
     let message: any[];
     if (imgList.value.length > 0) {
-      // const content: any[] = imgList.value.map(async (u) => {
-      //   console.log(u);
-      //   return {
-      //     type: 'image_url',
-      //     image_url: { url: await url2base64(u) },
-      //   };
-      // });
-
       const content: any[] = await Promise.all(
         imgList.value.map(async (u) => {
           // console.log(u);
@@ -185,16 +163,7 @@ async function imgInputHandler(e: Event) {
         imgList.value.push(`http://localhost:3000${resp.file.path}`);
       }
     }
-    // const reader = new FileReader();
-
-    // reader.onload = (ev) => {
-    //   const base64 = ev.target?.result?.toString();
-    //   base64 && imgList.value.push(base64);
-    // };
-
-    // reader.readAsDataURL(files[0]);
   }
-  showAddAttachment.value = false;
 }
 
 /**
