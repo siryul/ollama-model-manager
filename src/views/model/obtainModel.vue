@@ -50,11 +50,9 @@ const downloadHandler = async (e: MouseEvent) => {
     if (!model) {
       return;
     }
-    // FIXME: has an error to be handle 'Uncaught (in promise) AbortError: BodyStreamBuffer was aborted'
     downloadQueue.value[model]();
     delete downloadQueue.value[model];
     changeIconStatus(target, 'origin');
-    console.log('Task aborted');
     return;
   }
   if (target.innerText !== 'download_for_offline') {
@@ -63,29 +61,33 @@ const downloadHandler = async (e: MouseEvent) => {
 
   const model = target.dataset.name;
   if (model) {
-    const resp = await pullModel({ model });
-    changeIconStatus(target, 'downloading');
+    try {
+      const resp = await pullModel({ model });
+      changeIconStatus(target, 'downloading');
 
-    // save response, has abort method, use it like response.abort()
-    downloadQueue.value[model] = resp.abort.bind(resp);
+      // save response, has abort method, use it like response.abort()
+      downloadQueue.value[model] = resp.abort.bind(resp);
 
-    let isSuccess = false;
+      let isSuccess = false;
 
-    for await (const chunk of resp) {
-      if (chunk.status === 'success') {
-        // download success
-        isSuccess = true;
-        // delete completed response
-        delete downloadQueue.value[model];
-        // update modelsStore list
-        modelsStore.updateList();
+      for await (const chunk of resp) {
+        if (chunk.status === 'success') {
+          // download success
+          isSuccess = true;
+          // delete completed response
+          delete downloadQueue.value[model];
+          // update modelsStore list
+          modelsStore.updateList();
+        }
       }
-    }
 
-    if (isSuccess) {
-      changeIconStatus(target, 'success');
-    } else {
-      changeIconStatus(target, 'origin');
+      if (isSuccess) {
+        changeIconStatus(target, 'success');
+      } else {
+        changeIconStatus(target, 'origin');
+      }
+    } catch (error) {
+      console.log('🚀 ~ downloadHandler ~ error:', error);
     }
   }
 };
