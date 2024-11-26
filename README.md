@@ -15,6 +15,14 @@
   </p>
 </p>
 
+## 界面预览
+
+<p align="center">
+  <img src="./images/Xnip2024-11-26_19-34-17.jpg" style="width: 70%;" alt="Image 1" />
+  <img src="./images/Xnip2024-11-26_19-34-57.jpg" style="width: 70%;" alt="Image 2" />
+  <img src="./images/Xnip2024-11-26_19-35-19.jpg" style="width: 70%;" alt="Image 3" />
+</p>
+
 ## ✨ 特性
 
 - **使用 Vue 3、Pinia、Vue Router、Vite、TypeScript 开发** 🚀

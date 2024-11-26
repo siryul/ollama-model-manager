@@ -26,6 +26,7 @@ export class IndexedDBHelper {
     callback: (store: IDBObjectStore) => Promise<T>,
   ): Promise<T> {
     return new Promise((resolve, reject) => {
+      // FIXME: Not found Error -> One of the specified object stores was not found.
       const transaction = db.transaction(storeName, mode);
       const store = transaction.objectStore(storeName);
 

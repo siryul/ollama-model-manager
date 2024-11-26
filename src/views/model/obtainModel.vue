@@ -50,7 +50,7 @@ const downloadHandler = async (e: MouseEvent) => {
     if (!model) {
       return;
     }
-    // TODO: has an error to be handle 'Uncaught (in promise) AbortError: BodyStreamBuffer was aborted'
+    // FIXME: has an error to be handle 'Uncaught (in promise) AbortError: BodyStreamBuffer was aborted'
     downloadQueue.value[model]();
     delete downloadQueue.value[model];
     changeIconStatus(target, 'origin');

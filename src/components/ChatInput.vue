@@ -32,8 +32,8 @@
     <div class="flex items-center text-gray-500 justify-between select-none">
       <div class="flex items-center relative">
         <!-- Button to toggle attachment options -->
-        <label for="img">
-          <span class="material-icons-outlined">image</span>
+        <label for="img" class="flex items-center">
+          <span class="material-icons-outlined cursor-pointer">image</span>
         </label>
         <input
           id="img"
@@ -46,8 +46,9 @@
       </div>
       <div class="flex items-center">
         <!-- Placeholder for microphone functionality -->
-        <span class="material-icons mr-2">mic</span>
-        <span class="material-icons scale-75 voice p-2 bg-slate-700 rounded-full text-slate-50"
+        <span class="material-icons mr-2 cursor-pointer">mic</span>
+        <span
+          class="material-icons scale-75 voice p-2 bg-slate-600 hover:bg-slate-700 rounded-full text-slate-50 cursor-pointer"
           >record_voice_over</span
         >
       </div>
@@ -137,7 +138,7 @@ async function submit(e: KeyboardEvent) {
       });
       imgList.value = [];
     } else {
-      message = [{ role: 'user', content: msg.value }];
+      message = [{ type: 'text', text: msg.value }];
       chatStore.updateChat({ role: 'user', content: msg.value });
     }
     msg.value = '';

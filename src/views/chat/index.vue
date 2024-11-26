@@ -35,7 +35,7 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
 </script>
 
 <template>
-  <div class="container relative h-full overflow-x-hidden overflow-y-auto pb-40">
+  <div class="relative h-full w-full overflow-x-hidden overflow-y-auto pb-40">
     <ul
       class="tips absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-3 text-gray-400 select-none"
       v-if="showTips"
@@ -68,7 +68,7 @@ const handSubmit = async (stream: Stream<ChatCompletionChunk>) => {
       </li>
     </ul>
 
-    <ul class="pl-4 pr-4 flex flex-col gap-4 mt-4">
+    <ul class="pl-14 pr-14 flex flex-col gap-4 mt-4">
       <li
         v-for="(m, i) in currentChat.messages"
         :key="i"

@@ -2,7 +2,6 @@ import type { IChat } from '@/types';
 import { defineStore } from 'pinia';
 import { computed, readonly, ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
-import { recover, save } from '@/utils/persistence';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
 import { addMessageToChat, dbInit, getAllChat, saveSingleChat } from '@/db';
 
@@ -49,10 +48,9 @@ export const useChatStore = defineStore('chat', () => {
     let chat: IChat[] = [];
     try {
       await dbInit();
-      const chat = await getAllChat();
-      // setChat(recover()); // use localstorage
+      chat = await getAllChat();
     } catch (error) {
-      console.log('🚀 ~ chat init ~ error:', error);
+      console.error('🚀 ~ chat init ~ error:', error);
     } finally {
       setChat(chat);
       addNewChat();
